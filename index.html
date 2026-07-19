@@ -1,41 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Support AI Chatbot</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Student Support Chatbot</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-<h2>Student Support AI Chatbot</h2>
+<div class="container">
 
-<input type="text" id="msg" placeholder="Ask your question">
-<button onclick="send()">Send</button>
+    <h2>🎓 AI Student Support Chatbot</h2>
 
-<div id="chat"></div>
+    <div id="chat-box"></div>
 
-<script>
-function send(){
+    <div class="input-area">
+        <input
+            type="text"
+            id="user-input"
+            placeholder="Ask your question..."
+        >
 
-let msg=document.getElementById("msg").value;
+        <button id="send-btn">
+            Ask
+        </button>
+    </div>
 
-fetch("/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-message:msg
-})
-})
-.then(res=>res.json())
-.then(data=>{
-document.getElementById("chat").innerHTML +=
-"<p><b>You:</b> "+msg+"</p>";
-document.getElementById("chat").innerHTML +=
-"<p><b>Bot:</b> "+data.reply+"</p>";
-document.getElementById("msg").value="";
-});
-}
-</script>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
