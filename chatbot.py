@@ -1,32 +1,64 @@
-import google.generativeai as genai
 import os
+import google.generativeai as genai
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load environment variables
+load_dotenv(dotenv_path=".env")
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+# Get Gemini API Key
+API_KEY = os.getenv("GEMINI_API_KEY")
+print("API KEY =", os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY not found. Please add it in the .env file.")
 
-def get_response(question):
-    prompt = f"""
-    You are a Student Support AI chatbot.
-    Answer only student-related questions such as:
-    - Admission
-    - Fees
-    - Attendance
-    - Hostel
-    - Examination
-    - Library
-    - Placement
-    - General College Information
+# Configure Gemini
+genai.configure(api_key=API_KEY)
 
-    If the question is unrelated, politely say:
-    "Sorry, I can only answer student support queries."
+# Load Gemini Model
+model = genai.GenerativeModel("gemini-3.5-flash")
 
-    Student Question:
-    {question}
+
+def get_ai_response(user_message):
+    """
+    Generate AI response for student support queries.
     """
 
-    response = model.generate_content(prompt)
-    return response.text
+    prompt = f"""
+You are an AI Student Support Chatbot.
+
+Your job is to answer only student-related questions.
+
+You can answer questions about:
+- Admission
+- Fees
+- Attendance
+- Hostel
+- Examination
+- Library
+- Scholarship
+- Placement
+- Courses
+- Faculty
+- Timetable
+- General college information
+
+If the user asks anything unrelated to student support,
+politely reply:
+
+"Sorry, I can only answer student support related questions."
+
+Student Question:
+{user_message}
+"""
+
+    try:
+        response = model.generate_content(prompt)
+
+        if hasattr(response, "text") and response.text:
+            return response.text
+
+        return "Sorry, I couldn't generate a response."
+
+    except Exception as e:
+        return f"Error: {str(e)}"
